@@ -24,6 +24,21 @@ RMSProp uses an exponentially decaying average to discard history from the extre
 `Adam`：The name “Adam” derives from the phrase “adaptive moments.” It is a variant on the combination of RMSProp and momentum with a few important distinctions. Adam is generally regarded as being fairly robust to the choice of hyperparameters, though the learning rate sometimes needs to be changed from the suggested default.   
 * 如果将MNIST数据集的AdamOptimizer换成GradientDescentOptimizer， 测试集的准确率为0.9296
 
+#### TensorBoard之Embedding
+TensorBoard是TensorFlow自带的可视化工具， Embedding是其中的一个功能， 用于在二维或者三维空间对高维数据进行探索。  
+> An embeding is a map from input data ti points in euclidean space  
+
+首先，从[这里](https://www.tensorflow.org/images/mnist_10k_sprite.png)下载图片，放到主目录的log目录下； 然后执行代码； 最后， 执行下面的命令启动TensorBoard.
+```
+tensorboard --logdir=log
+```
+执行后， 在浏览器中输入，命令行中出现的链接地址。  
+```
+Starting TensorBoard 39 on port 6006
+(You can navigate to http://....)
+```  
+[这篇文章](http://colah.github.io/posts/2014-10-Visualizing-MNIST/)对MNIST的可视化做了深入的研究， 非常值得细读。
+
 
 
 
