@@ -39,6 +39,168 @@ Starting TensorBoard 39 on port 6006
 ```  
 [这篇文章](http://colah.github.io/posts/2014-10-Visualizing-MNIST/)对MNIST的可视化做了深入的研究， 非常值得细读。
 
+### 一些tensorflow的基本操作
+详细参考这篇[文章](http://blog.csdn.net/lenbow/article/details/52152766)
+
+1. tensorflow的基本运作
+```
+import tensorflow as tf
+ #定义‘符号’变量，也称为占位符
+a = tf.placeholder("float")
+b = tf.placeholder("float")
+y = tf.mul(a, b) #构造一个op节点
+
+sess = tf.Session()#建立会话
+#运行会话，输入数据，并计算节点，同时打印结果
+print sess.run(y, feed_dict={a: 3, b: 3})
+# 任务完成, 关闭会话.
+sess.close()
+```
+2. tf函数
+
+
+操作组 | 操作
+---|---
+Maths | Add, Sub, Mul, Div, Exp, Log, Greater, Less, Equal
+Array | Concat, Slice, Spilt, Constant, Rank, Shape, Shuffle
+Matrix | MatMul, MatricInverse, MatrixDeterminant
+Neuronal Network | SoftMax, Sigmoid, ReLU, Convonlution2D, MaxPool
+Checkpoint | Save, Restore
+Queues and syncronizations | Enqueue, Dequeue, MutexAcquire, MutexRelease
+Flow control | Merge, Switch, Enter, Leave, NextIteration
+
+TensorFlow的算术操作如下：
+操作 | 描述
+---|---
+tf.add(x, y, name=None) | 求和
+tf.sub(x, y, name=None) | 减法
+tf.mul(x, y, name=None) | 乘法
+tf.div(x, y, name=None) | 除法
+tf.mod(x, y, name=None) | 取模
+tf.abs(x, name=None) | 绝对值
+tf.neg(x, name=None) | 取负
+tf.sign(x, name=None) | 符号函数 
+tf.inv(x, name=None) | 取反
+tf.square(x, name=None) | 平方
+tf.round(x, name=None) | 舍入最接近的整数
+tf.pow(x, y, name=None) | 幂次方
+
+张量操作 Tensor Transformations
+* 数据类型转换Casting
+
+操作 | 描述
+--- | ---
+tf.string_to_number(string_tensor, out_type=None, name=None) | 字符串转为数字
+tf.to_double(x, name='ToDouble') | 转为64位浮点类型
+tf.to_float(x, name=ToFloat) | 转为32位浮点类型
+tf.to_int32(x, name='Toint32') | 转为32位整型
+tf.cast(x, dtype, name=None) | 将x或者x.value转换成dtype (tensor `a` = [1.8, 2.2] tf.cast(a, tf.int32))
+
+
+* 形状操作shape  
+
+操作 | 描述
+---|---
+tf.shape(input, name=None) | 返回数据的shape
+tf.size(input, name=None) | 返回数据的元素数量
+tf.rank(input, name=None) | 返回tensor的rank, 此rank不同于矩阵的rank, t=[[[1,1,1], [2,2,2]],[[3, 3, 3], [4, 4, 4]]] , shape of t is [2,2,3], rank(t) =3
+tf.reshape(tensor, shape, name=None) | 改变tensor的形状, 如果shape有元素[-1], 表示在该维度打平至一维 
+tf.expand_dims(input, dim, name=None) | 插入维度1进入tensor中  
+
+* 矩阵操作  
+
+操作 | 描述
+---|---
+tf.diag(diagonal, name=None) |
+tf.diag_part(input, name=None) |
+tf.trace(x, name=None) | 求一个2维tensor的迹， 即对角值diagonal之和
+tf.transpose() | 转置
+tf.matmul() | 矩阵相乘
+tf.matrix_determinant() | 返回矩阵的行列式
+tf.matrix_inverse() | 求矩阵的逆矩阵
+tf.matrx_solve() | 对矩阵求解  
+
+* 归约计算(reduction)  
+
+操作 | 描述
+---|---
+tf.reduce_sum(input_tensor, reduction_indices=None, keep_dims=False, name=None) | 计算输入tensor元素的和， 或者按照reduction_indices指定的轴进行求和
+tf.reduce_prod(input_tensorm reduction_indices=None, keep_dims=False, name=None) | 计算输入tensor元素的乘积， 或者按照reduction_indices指定的轴进行求乘积
+tf.reduce_min() | 求tensor中的最小值
+tf.reduce_max() | 求tensor中的最大值
+tf.mean() | 求tensor的平均值
+tf.reduce_all() | 对tensor中的各个元素进行求逻辑`and`
+tf.reduce_any() | 对tensor中的各个元素求逻辑`or`  
+tf.accumulate_n(inputs, shape=None, tensor_dtype=None, name=None) | 计算一系列tensor的和
+tf.cumsum() | 求累积和
+
+* 分割(Segmentation)
+* 序列比较与索引提取  
+
+操作 | 描述
+---| ---
+tf.argmin(input, dimension, name=None) | 返回input最小值的索引index
+tf.argmax() | 返回最大值索引
+
+神经网络(NN)
+* 激活函数(Activation Function)  
+
+操作 | 描述
+---|---
+tf.nn.relu(features, name=None) | 整流函数： max(features, 0)
+tf.nn.relu6(features, name-None) | 以6为阈值的整理函数：min(max(features, 0), 6)
+tf.nn.elu(features, name=None) | elu函数, exp(features) - 1 if < 0, 否则features Exponential Linear Units
+tf.nn.softplus(features, name=None) | 计算softplus:log(exp(features) + 1)
+tf.nn.dropout(x, keep_prob, noise_shape=None, seed=None, name=None) | 计算dropout, keep_prob为keep概率
+tf.nn.bias_add(value, bias, data_format=None, name=None) | 对value加一偏置量， 此函数为tf.add的特殊情况，bias仅为一维，函数通过广播机制进行与value求和
+tf.sifmoid(x, name=None) | y = 1 / (1 + exp(-x))
+tf.tanh(x, name=None) | 双曲线切线激活函数  
+
+* 卷积函数(convolution)  
+
+操作 | 描述
+---|---
+tf.nn.conv2d(input, filter, strides, padding, use_cudnn_on_gpu=None, data_format=None, name=None) | 在给定4D input 与 filter 下计算2D卷积， 输入shape为[batch, height, weight, in_channels]
+tf.nn.conv3d(input, filter, strides, padding, name=None) | 在给定5D input 与filter下计算3D卷积，输入shape为[batch, in_depth, in_height, in_width, in_channels]  
+
+* 池化函数(pooling)
+
+操作 | 描述
+---|---
+tf.nn.avg_pool(value, ksize, strides, padding, date_format, name=None) | 平均方式池化
+tf.nn.max_pool() | 最大值方式池化
+tf.nn.max_pool_with_argmax(input, ksize, padding, Targmax, name) | 返回一个二维元祖(output, argmax), 最大值pooling， 返回最大值及其相应索引
+tf.nn.avg_pool3d(input, ksize, strides, padding, name) | 3D平均值pooling
+tf.nn.max_pool3d() | 3D最大值pooling  
+
+* 数据标准化  
+
+操作 | 描述
+---|---
+tf.nn.l2_normalize(x, dim, epsilon=1e-12, name=None) | 对维度dim进行L2范式标准化， output = x / sqrt(max(sum(x**2), epsilon))
+tf.nn.sufficient_statistics(x, axes, shift=None, keep_dims=False, name=None)| 计算与均值和方差相关的完全统计量， 返回4维元祖（元素个数， 元素总和， 元素的平方和， shift结果）
+tf.nn.normalize_moments(counts, mean_ss, variance_ss, shift, name=None) | 基于完全统计量计算均值和方差
+tf.nn.moments(x, axes, shift=None, name=None, keep_dims=False) | 直接计算均值与方差  
+
+* 损失函数  
+
+操作 | 描述
+---|---
+tf.nn.l2_loss | output = sum(t**2) / 2  
+
+* 分类函数  
+
+操作 | 描述
+---|---
+tf.nn.sigmoid_cross_entropy_with_logits(logits, targets, name=None) | 计算输入logits, targets的交叉熵
+tf.nn.softmax(logits, name=None) | 计算softmax softmax[i,j] = exp(logits[i, j]) / sum_j(exp(logits[i,j]))
+tf.nn.log_softmax(logits, name=None) | logsoftmax[i,j] = logits[i,j] - log(sum(exp(logits[i])))
+tf.nn.softmax_cross_entropy_with_logits(logits, label) | 计算logits和label的softmax的交叉熵， logits， label必须为相同的shape与数据类型
+tf.nn.sparse_softmax_cross_entropy_with_logits(logits, label, name=None) | 计算logits和label的softmax交叉熵
+tf.nn.weighted_cross_entropy_with_logits(logits, targets, pos_weight, name=None) | 与sigmoid_cross_entropy_with_logits()相似， 但给正向向本损失加了权重pos_weight  
+
+
+
 
 
 
